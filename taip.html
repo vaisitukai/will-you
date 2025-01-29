@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vertical Video Page</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            background-image: url('img/bg.jpg'); /* Set the background image */
+            background-size: cover;
+            background-position: center;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            position: relative; /* Ensure positioning for the fireworks */
+        }
+
+        .video-container {
+            width: 100%; /* Make the container full width */
+            max-width: 720px; /* Max width of the container */
+            height: 100%; /* Make the container full height */
+            max-height: 1920px; /* Max height for the container */
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px; /* Optional: Rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Optional: Shadow effect */
+        }
+
+        video {
+            width: 100%; /* Make video take full width of the container */
+            height: 100%; /* Make video take full height of the container */
+            object-fit: cover; /* Ensure video covers the entire container */
+        }
+
+        /* Fireworks Canvas */
+        #fireworksCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Allow interaction with the video */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="video-container">
+        <video autoplay loop muted>
+            <source src="img/valentas.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <canvas id="fireworksCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('fireworksCanvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // Firework particle constructor
+        function Particle(x, y, color, speed, angle) {
+            this.x = x;
+            this.y = y;
+            this.color = color;
+            this.speed = speed;
+            this.angle = angle;
+            this.size = Math.random() * 3 + 2; // Random size
+            this.life = 1;
+        }
+
+        // Heart shape generator
+        function drawHeart(x, y, size, color) {
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.bezierCurveTo(x + size, y - size, x + size * 2, y + size / 2, x, y + size * 2);
+            ctx.bezierCurveTo(x - size * 2, y + size / 2, x - size, y - size, x, y);
+            ctx.closePath();
+            ctx.fillStyle = color;
+            ctx.fill();
+        }
+
+        // Particle movement logic
+        Particle.prototype.update = function() {
+            this.x += Math.cos(this.angle) * this.speed;
+            this.y += Math.sin(this.angle) * this.speed;
+            this.life -= 0.02; // Decrease life over time
+        };
+
+        Particle.prototype.draw = function() {
+            drawHeart(this.x, this.y, this.size, this.color);
+        };
+
+        // Firework class to manage fireworks
+        function Firework(x, y, color) {
+            this.x = x;
+            this.y = y;
+            this.color = color;
+            this.particles = [];
+            this.explode();
+        }
+
+        Firework.prototype.explode = function() {
+            const numParticles = 100;
+            const speed = 3;
+            for (let i = 0; i < numParticles; i++) {
+                const angle = Math.random() * 2 * Math.PI;
+                const speedVariation = Math.random() * speed;
+                this.particles.push(new Particle(this.x, this.y, this.color, speedVariation, angle));
+            }
+        };
+
+        Firework.prototype.update = function() {
+            for (let i = this.particles.length - 1; i >= 0; i--) {
+                const p = this.particles[i];
+                p.update();
+                p.draw();
+                if (p.life <= 0) {
+                    this.particles.splice(i, 1);
+                }
+            }
+        };
+
+        // Create a random firework
+        function createFirework() {
+            const x = Math.random() * canvas.width;
+            const y = Math.random() * canvas.height / 2; // Upper half of the screen
+            const color = `hsl(${Math.random() * 360}, 100%, 60%)`; // Random color
+            const firework = new Firework(x, y, color);
+            fireworks.push(firework);
+        }
+
+        // Animation loop
+        const fireworks = [];
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < fireworks.length; i++) {
+                fireworks[i].update();
+            }
+
+            // Create new fireworks every 2 seconds
+            if (Math.random() < 0.05) {
+                createFirework();
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        // Start animation on page load
+        window.onload = animate;
+    </script>
+
+</body>
+</html>

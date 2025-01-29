@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teleporting Button</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            background-image: url('img/bg.jpg'); /* Set background image */
+            background-size: cover;
+            background-position: center;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+        .header-image {
+            width: 15%; /* Adjust width as needed */
+            max-width: 600px; /* Prevent it from being too large */
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: white; /* Make text readable on any background */
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+        }
+        .button-container {
+            display: flex;
+            gap: 50px; /* Space between buttons */
+        }
+        .btn {
+            width: 240px; /* Set width to twice the size */
+            height: 100px; /* Set height to twice the size */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            border: none;
+            transition: 0.3s;
+            position: relative;
+            padding: 0;
+            outline: none;
+            text-align: center;
+        }
+        .btn img {
+            width: 100%; /* Ensure the image fits the button width */
+            height: 100%; /* Ensure the image fits the button height */
+            object-fit: contain; /* Maintain aspect ratio */
+        }
+        .btn-text {
+            position: absolute; /* Position text on top of the image */
+            color: white;
+            font-size: 20px; /* Adjust the font size */
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            z-index: 1; /* Ensure text is on top of the image */
+        }
+    </style>
+</head>
+<body>
+
+    <img src="img/me.png" alt="Header Image" class="header-image">
+    <h1>Ar būsi mano valentinas?</h1>
+    <div class="button-container">
+        <!-- Link for button 1 -->
+        <a href="taip.html">
+            <button class="btn btn1">
+                <img src="img/yes.png" alt="Yes">
+                <span class="btn-text">TAIP</span>
+            </button>
+        </a>
+
+        <!-- Button 2 for teleporting -->
+        <button class="btn btn2" id="teleportButton">
+            <img src="img/no.png" alt="No">
+            <span class="btn-text">NE???</span>
+        </button>
+    </div>
+
+    <script>
+        const teleportButton = document.getElementById("teleportButton");
+
+        function teleport() {
+            const buttonWidth = teleportButton.clientWidth;
+            const buttonHeight = teleportButton.clientHeight;
+            const maxX = window.innerWidth - buttonWidth;
+            const maxY = window.innerHeight - buttonHeight;
+
+            // Generate random position within the screen
+            const randomX = Math.random() * maxX;
+            const randomY = Math.random() * maxY;
+
+            teleportButton.style.position = "absolute"; // Allow movement
+            teleportButton.style.left = `${randomX}px`;
+            teleportButton.style.top = `${randomY}px`;
+        }
+
+        // Teleport on hover
+        teleportButton.addEventListener("mouseover", teleport);
+        
+        // Teleport on click (for mobile users)
+        teleportButton.addEventListener("click", teleport);
+    </script>
+
+</body>
+</html>
